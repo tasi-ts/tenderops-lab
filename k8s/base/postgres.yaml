@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tenderops-db-secret
+  namespace: tenderops
+type: Opaque
+stringData:
+  POSTGRES_DB: tenderops
+  POSTGRES_USER: tenderops
+  POSTGRES_PASSWORD: tenderops
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tenderops-db-data
+  namespace: tenderops
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tenderops-db
+  namespace: tenderops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tenderops-db
+  template:
+    metadata:
+      labels:
+        app: tenderops-db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - secretRef:
+                name: tenderops-db-secret
+          volumeMounts:
+            - name: db-data
+              mountPath: /var/lib/postgresql/data
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - tenderops
+                - -d
+                - tenderops
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - tenderops
+                - -d
+                - tenderops
+            initialDelaySeconds: 20
+            periodSeconds: 20
+      volumes:
+        - name: db-data
+          persistentVolumeClaim:
+            claimName: tenderops-db-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tenderops-db
+  namespace: tenderops
+spec:
+  selector:
+    app: tenderops-db
+  ports:
+    - port: 5432
+      targetPort: 5432

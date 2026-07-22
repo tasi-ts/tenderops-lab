@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tenderops-api-secret
+  namespace: tenderops
+type: Opaque
+stringData:
+  SPRING_DATASOURCE_USERNAME: tenderops
+  SPRING_DATASOURCE_PASSWORD: tenderops
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tenderops-api-config
+  namespace: tenderops
+data:
+  SPRING_PROFILES_ACTIVE: local
+  SPRING_DATASOURCE_URL: jdbc:postgresql://tenderops-db:5432/tenderops
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tenderops-api
+  namespace: tenderops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tenderops-api
+  template:
+    metadata:
+      labels:
+        app: tenderops-api
+    spec:
+      containers:
+        - name: api
+          image: tenderops-api:0.1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: tenderops-api-config
+            - secretRef:
+                name: tenderops-api-secret
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 40
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tenderops-api
+  namespace: tenderops
+spec:
+  selector:
+    app: tenderops-api
+  ports:
+    - port: 8080
+      targetPort: 8080
