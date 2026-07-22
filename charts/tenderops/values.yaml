@@ -1,0 +1,27 @@
+api:
+  name: tenderops-api
+  image:
+    repository: tenderops-api
+    tag: "0.1.0"
+    pullPolicy: IfNotPresent
+  replicas: 1
+  port: 8080
+  profile: local
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+db:
+  name: tenderops-db
+  image:
+    repository: postgres
+    tag: "16-alpine"
+  port: 5432
+  database: tenderops
+  username: tenderops
+  password: tenderops
+  storage: 1Gi
