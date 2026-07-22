@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  api-test:
+    name: API - Maven test
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: src/api
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Run tests
+        run: ./mvnw clean test
+
+  api-docker-build:
+    name: API - Docker build
+    runs-on: ubuntu-latest
+    needs:
+      - api-test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Build API Docker image
+        run: docker build -t tenderops-api:ci ./src/api

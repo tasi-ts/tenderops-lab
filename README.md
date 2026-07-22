@@ -22,3 +22,13 @@ This repository simulates a small B2B tendering-platform environment. The applic
 ## Status
 
 Initial repository skeleton.
+
+## Local CI check
+
+Run:
+
+```bash
+./scripts/ci/api-check.sh
+```
+
+This runs API tests and builds the API docker image.
