@@ -1,19 +1,43 @@
 services:
+  db:
+    image: postgres:16-alpine
+    container_name: tenderops-db
+    environment:
+      POSTGRES_DB: tenderops
+      POSTGRES_USER: tenderops
+      POSTGRES_PASSWORD: tenderops
+    ports:
+      - "5433:5432"
+    volumes:
+      - tenderops-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tenderops -d tenderops"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
   api:
     build:
       context: ./src/api
       dockerfile: Dockerfile
-    image:
-      tenderops-api:0.1.0
+    image: tenderops-api:0.1.0
     container_name: tenderops-api
     ports:
-      - 8080:8080
+      - "8080:8080"
     environment:
-      - SPRING_PROFILES_ACTIVE=local
+      SPRING_PROFILES_ACTIVE: local
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/tenderops
+      SPRING_DATASOURCE_USERNAME: tenderops
+      SPRING_DATASOURCE_PASSWORD: tenderops
+    depends_on:
+      db:
+        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:8080/actuator/health/readiness || exit 1"]
       interval: 10s
       timeout: 3s
       retries: 5
       start_period: 20s
-    
+
+volumes:
+  tenderops-db-data:

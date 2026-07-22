@@ -2,6 +2,18 @@ spring:
   application:
     name: tenderops-api
 
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/tenderops}
+    username: ${SPRING_DATASOURCE_USERNAME:tenderops}
+    password: ${SPRING_DATASOURCE_PASSWORD:tenderops}
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    schemas: public
+    default-schema: public
+    create-schemas: true
+
 server:
   port: 8080
 
