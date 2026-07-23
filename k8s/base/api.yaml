@@ -16,6 +16,8 @@ metadata:
 data:
   SPRING_PROFILES_ACTIVE: local
   SPRING_DATASOURCE_URL: jdbc:postgresql://tenderops-db:5432/tenderops
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,info,metrics
+  MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: always
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -23,7 +25,7 @@ metadata:
   name: tenderops-api
   namespace: tenderops
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: tenderops-api
@@ -32,10 +34,23 @@ spec:
       labels:
         app: tenderops-api
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: api
           image: tenderops-api:0.1.0
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8080
           envFrom:
@@ -43,6 +58,9 @@ spec:
                 name: tenderops-api-config
             - secretRef:
                 name: tenderops-api-secret
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
@@ -62,6 +80,9 @@ spec:
             limits:
               cpu: "500m"
               memory: "512Mi"
+      volumes:
+        - name: tmp
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
