@@ -33,10 +33,23 @@ spec:
       annotations:
         tenderops.io/observability-endpoints: {{ .Values.api.observability.exposedEndpoints | quote }}
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: api
           image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"
           imagePullPolicy: {{ .Values.api.image.pullPolicy }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: {{ .Values.api.port }}
           envFrom:
@@ -44,6 +57,9 @@ spec:
                 name: {{ .Values.api.name }}-config
             - secretRef:
                 name: {{ .Values.api.name }}-secret
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
@@ -58,6 +74,9 @@ spec:
             periodSeconds: 20
           resources:
 {{ toYaml .Values.api.resources | indent 12 }}
+      volumes:
+        - name: tmp
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service

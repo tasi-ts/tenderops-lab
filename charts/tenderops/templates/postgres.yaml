@@ -33,9 +33,22 @@ spec:
       labels:
         app: {{ .Values.db.name }}
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 70
+        runAsGroup: 70
+        fsGroup: 70
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: postgres
           image: "{{ .Values.db.image.repository }}:{{ .Values.db.image.tag }}"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: {{ .Values.db.port }}
           envFrom:
@@ -44,6 +57,10 @@ spec:
           volumeMounts:
             - name: db-data
               mountPath: /var/lib/postgresql/data
+            - name: postgres-run
+              mountPath: /var/run/postgresql
+            - name: tmp
+              mountPath: /tmp
           readinessProbe:
             exec:
               command:
@@ -68,6 +85,10 @@ spec:
         - name: db-data
           persistentVolumeClaim:
             claimName: {{ .Values.db.name }}-data
+        - name: postgres-run
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
