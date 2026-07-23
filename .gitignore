@@ -39,3 +39,6 @@ logs/
 # Kubernetes / local secrets
 *.secret.yaml
 secrets/
+
+# Generated security reports
+reports/security/
