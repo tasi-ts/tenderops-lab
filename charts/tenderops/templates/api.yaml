@@ -14,6 +14,8 @@ metadata:
 data:
   SPRING_PROFILES_ACTIVE: {{ .Values.api.profile | quote }}
   SPRING_DATASOURCE_URL: "jdbc:postgresql://{{ .Values.db.name }}:{{ .Values.db.port }}/{{ .Values.db.database }}"
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: {{ .Values.api.observability.exposedEndpoints | quote }}
+  MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: {{ .Values.api.observability.showHealthDetails | quote }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -28,6 +30,8 @@ spec:
     metadata:
       labels:
         app: {{ .Values.api.name }}
+      annotations:
+        tenderops.io/observability-endpoints: {{ .Values.api.observability.exposedEndpoints | quote }}
     spec:
       containers:
         - name: api

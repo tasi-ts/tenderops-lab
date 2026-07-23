@@ -7,6 +7,9 @@ api:
   replicas: 2
   port: 8080
   profile: local
+  observability:
+    exposedEndpoints: "health,info,metrics"
+    showHealthDetails: "always"
   resources:
     requests:
       cpu: "100m"
