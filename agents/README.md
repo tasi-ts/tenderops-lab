@@ -2,33 +2,60 @@
 
 This directory contains agent workflow documentation for TenderOps Lab.
 
-The current implemented agent workflow is focused on security remediation with Cursor.
+The current implemented workflows focus on controlled, agent-assisted DevSecOps work with Cursor.
 
-## Current purpose
+## Implemented agent workflows
 
-The agent workflow is designed to help process security findings in a controlled way.
+### Security Remediation Agent
 
-It should help with:
-
-- reading Trivy reports
-- classifying findings
-- identifying affected files
-- proposing minimal remediation steps
-- patching dependencies or Kubernetes manifests
-- running tests and scans
-- summarizing residual risk
-- preparing reviewable change notes
-
-## Implemented workflow
-
-The current Cursor-specific runbook is:
+Files:
 
 - `agents/cursor/security-remediation-agent.md`
+- `agents/cursor/security-remediation-prompts.md`
+- `.cursor/rules/security-remediation-agent.mdc`
 
-Supporting Cursor project rules are stored in:
+Purpose:
+
+- read Trivy reports
+- classify scanner findings
+- identify affected files
+- propose minimal remediation steps
+- patch dependencies or Kubernetes manifests after approval
+- run validation commands
+- summarize fixed findings, remaining findings, and residual risk
+
+Use this agent when there are concrete security findings to remediate.
+
+### Security Posture Review Agent
+
+Files:
+
+- `agents/cursor/security-posture-review-agent.md`
+- `agents/cursor/security-posture-review-prompts.md`
+- `.cursor/rules/security-posture-review-agent.mdc`
+
+Purpose:
+
+- review broader security posture
+- distinguish local-lab limitations from production gaps
+- assess Kubernetes, CI/CD, observability, secrets, and infrastructure maturity
+- recommend prioritized next improvements
+
+Use this agent when scans are clean but the project needs a broader security or production-readiness review.
+
+## Shared project rules
+
+Common project rules live in:
 
 - `.cursor/rules/tenderops-project.mdc`
-- `.cursor/rules/security-remediation-agent.mdc`
+
+These rules define:
+
+- repository boundaries
+- safety expectations
+- active deployment path
+- validation commands
+- documentation update expectations
 
 ## Safety expectations
 
@@ -41,17 +68,26 @@ Agents should not:
 - suppress findings without justification
 - change architecture without explanation
 - modify areas explicitly marked as out of scope
+- claim production readiness without caveats
 
 ## Recommended usage model
 
-The intended workflow is:
+For remediation work:
 
 1. Run security scans.
-2. Ask the agent to analyze the scan reports.
-3. Let the agent propose small, focused fixes.
-4. Review the diff manually.
-5. Run tests and scans again.
-6. Commit only after human review.
+2. Ask the remediation agent to analyze the scan reports.
+3. Review the agent analysis.
+4. Approve remediation only if the analysis is correct.
+5. Let the agent propose or apply minimal patches.
+6. Run tests and scans again.
+7. Commit only after human review.
+
+For posture review work:
+
+1. Ask the posture review agent for an analysis-only review.
+2. Review strengths, gaps, risks, and recommended improvements.
+3. Decide which improvements to implement.
+4. Create follow-up implementation tasks separately.
 
 ## Current status
 
@@ -59,12 +95,15 @@ Implemented:
 
 - project-wide Cursor rule
 - security remediation Cursor rule
-- reusable security remediation runbook
+- security posture review Cursor rule
+- reusable remediation runbook
+- reusable remediation prompts
+- reusable posture review runbook
+- reusable posture review prompts
 - Cursor agent README
 
 Planned:
 
-- test the agent workflow on future security findings
-- add additional runbooks for documentation updates
-- add additional runbooks for Kubernetes hardening
-- explore CI integration for security validation
+- test the posture review workflow in Cursor
+- add CI security gate workflow
+- add additional agent runbooks only when repeated workflows emerge

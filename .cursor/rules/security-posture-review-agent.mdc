@@ -1,0 +1,176 @@
+---
+description: Use when reviewing overall security posture, architecture risks, hardening gaps, residual risk, or DevSecOps maturity
+globs: ""
+alwaysApply: false
+---
+
+# Security Posture Review Agent Rule
+
+Use this rule when the user asks for a security posture review, architecture security review, DevSecOps maturity review, hardening gap analysis, or production-readiness security assessment.
+
+## Main objective
+
+Review the project beyond scanner findings.
+
+A clean vulnerability scan does not mean the system is production-ready. The agent should assess security posture across architecture, deployment, CI/CD, Kubernetes configuration, observability, secrets handling, and operational controls.
+
+## Review scope
+
+Inspect these areas when relevant:
+
+- `README.md`
+- `docs/architecture.md`
+- `docs/security-hardening.md`
+- `docs/observability.md`
+- `docs/interview-prep-summary.md`
+- `scripts/security/scan-local.sh`
+- `.github/workflows/`
+- `src/api/pom.xml`
+- `src/api/Dockerfile`
+- `charts/tenderops/values.yaml`
+- `charts/tenderops/templates/`
+- `k8s/base/`
+- `gitops/apps/`
+- `infra/`
+- `observability/`
+
+## Review categories
+
+Classify observations into:
+
+- Current strength
+- Local-lab acceptable limitation
+- Production gap
+- Security risk
+- Operational risk
+- Recommended next improvement
+
+## Areas to evaluate
+
+### Application security
+
+Review:
+
+- exposed Actuator endpoints
+- API surface
+- validation
+- error handling
+- dependency hygiene
+- database migration behavior
+
+### Container security
+
+Review:
+
+- non-root execution
+- base image choice
+- image tag strategy
+- read-only root filesystem
+- Linux capabilities
+- privilege escalation settings
+- writable filesystem mounts
+
+### Kubernetes security
+
+Review:
+
+- namespace separation
+- Secrets and ConfigMaps
+- resource requests and limits
+- readiness/liveness probes
+- pod security context
+- container security context
+- NetworkPolicies
+- service exposure
+- persistent volume use
+
+### GitOps and CI/CD security
+
+Review:
+
+- Argo CD repository access
+- private repository credentials
+- manual vs automated deployment boundaries
+- CI security scanning
+- security gate behavior
+- image registry and promotion flow
+- commit/push safety
+
+### Observability and operations
+
+Review:
+
+- health endpoints
+- metrics endpoints
+- logs
+- events
+- alerting gaps
+- dashboard gaps
+- incident troubleshooting readiness
+
+### Infrastructure security
+
+Review:
+
+- local-only assumptions
+- Terraform/Azure readiness
+- cloud secret management gaps
+- managed database gaps
+- registry gaps
+- monitoring/logging gaps
+
+## Output format
+
+Produce a concise but structured review:
+
+```text
+Security posture review
+
+Current strengths:
+- ...
+
+Local-lab acceptable limitations:
+- ...
+
+Production gaps:
+- ...
+
+Recommended next improvements:
+1. ...
+2. ...
+3. ...
+
+Suggested priority:
+- short term:
+- medium term:
+- later:
+
+Files or docs that should be updated:
+- ...
+```
+
+## Rules
+
+Do not edit files unless explicitly asked.
+
+Do not treat a clean Trivy scan as full security approval.
+
+Do not recommend expensive cloud work before simpler local controls unless there is a clear reason.
+
+Clearly separate:
+
+- what is already implemented
+- what is acceptable for a local lab
+- what would be needed for production
+- what is optional portfolio enhancement
+
+## Hard restrictions
+
+Do not:
+
+- expose secret values
+- request credentials
+- modify repo files without approval
+- suppress or minimize real risks
+- invent implemented controls that are not present
+- claim production readiness without caveats

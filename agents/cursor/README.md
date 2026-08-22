@@ -2,21 +2,17 @@
 
 This directory contains Cursor-specific agent workflow documentation for TenderOps Lab.
 
-The current focus is a security remediation workflow that helps process Trivy findings and turn them into controlled, reviewable changes.
+The current focus is controlled agent-assisted DevSecOps work.
 
 ## Implemented runbooks
 
 - `agents/cursor/security-remediation-agent.md`
+- `agents/cursor/security-posture-review-agent.md`
 
-This runbook defines how a Cursor agent should:
+## Reusable prompt files
 
-- read Trivy reports
-- classify findings
-- identify affected files
-- propose minimal remediation
-- patch files
-- run validation commands
-- summarize fixed and remaining risk
+- `agents/cursor/security-remediation-prompts.md`
+- `agents/cursor/security-posture-review-prompts.md`
 
 ## Cursor project rules
 
@@ -26,19 +22,75 @@ Current rules:
 
 - `.cursor/rules/tenderops-project.mdc`
 - `.cursor/rules/security-remediation-agent.mdc`
+- `.cursor/rules/security-posture-review-agent.mdc`
 
-These rules define project boundaries, safety constraints, validation commands, and security remediation behavior.
+These rules define project boundaries, safety constraints, validation commands, remediation behavior, and posture-review behavior.
 
-## Recommended Cursor workflow
+## Security Remediation Agent
 
-1. Open this repository in Cursor.
-2. Make sure the latest Trivy reports exist by running `./scripts/security/scan-local.sh`.
-3. Open Cursor Agent mode.
-4. Use the prompt from `agents/cursor/security-remediation-agent.md`.
-5. Let the agent analyze findings and propose small patches.
-6. Review the diff manually.
-7. Run validation commands.
-8. Commit only after human review.
+Use this workflow when scanner findings exist and need controlled remediation.
+
+Typical use cases:
+
+- Trivy dependency findings
+- Docker image vulnerabilities
+- Kubernetes or Helm misconfigurations
+- possible secret findings
+- container hardening issues
+
+The expected workflow is:
+
+1. Run `./scripts/security/scan-local.sh`.
+2. Ask Cursor Agent to analyze the reports.
+3. Review the agent analysis.
+4. Approve remediation only if the analysis is correct.
+5. Let the agent patch minimal files.
+6. Rerun tests and scans.
+7. Review the diff manually before commit.
+
+## Security Posture Review Agent
+
+Use this workflow when scans may be clean but the broader security posture still needs review.
+
+Typical use cases:
+
+- production-readiness review
+- local-lab versus production gap analysis
+- Kubernetes hardening maturity review
+- CI/CD security maturity review
+- observability and incident-readiness review
+- portfolio improvement planning
+
+The expected workflow is:
+
+1. Ask Cursor Agent to execute a posture review prompt.
+2. Keep the first pass analysis-only.
+3. Review strengths, gaps, risks, and recommended improvements.
+4. Approve documentation or implementation tasks separately.
+
+## Recommended Cursor usage
+
+Open Cursor Agent mode and launch a task by referencing one of the prompt files.
+
+Example launcher:
+
+```text
+Read agents/cursor/security-remediation-prompts.md and execute “Prompt 3: Clean scan verification”.
+
+Use the repo Cursor rules.
+
+Do not edit files unless an actual finding requires remediation.
+```
+
+Another example:
+
+```text
+Read agents/cursor/security-posture-review-prompts.md and execute “Prompt 1: Full security posture review”.
+
+Use the repo Cursor rules.
+
+Do not edit files.
+```
 
 ## Important guardrails
 
@@ -50,6 +102,7 @@ Cursor agents should not:
 - delete unrelated files
 - suppress findings without justification
 - make broad architecture changes without explanation
+- claim production readiness without caveats
 
 ## Useful validation commands
 
@@ -66,9 +119,14 @@ Implemented:
 
 - project-wide Cursor rule
 - security remediation Cursor rule
+- security posture review Cursor rule
 - reusable security remediation runbook
+- reusable security remediation prompts
+- reusable security posture review runbook
+- reusable security posture review prompts
 
 Planned:
 
-- test the security remediation workflow on a real future finding
-- add additional runbooks for documentation updates or Kubernetes hardening
+- test the posture review workflow in Cursor
+- add CI security gate workflow
+- add additional runbooks only when a real repeated workflow emerges
