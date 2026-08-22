@@ -1,0 +1,138 @@
+---
+description: Use when triaging or remediating Trivy, dependency, Docker image, Kubernetes, Helm, or DevSecOps findings
+globs: ""
+alwaysApply: false
+---
+
+# Security Remediation Agent Rule
+
+Use this rule when the user asks for security scanning, Trivy report analysis, vulnerability remediation, Kubernetes hardening, container hardening, or DevSecOps workflow improvements.
+
+## Main objective
+
+Turn scanner findings into small, reviewable, tested remediation changes.
+
+The target workflow is:
+
+```text
+scan
+  ↓
+triage findings
+  ↓
+identify source files
+  ↓
+propose minimal remediation
+  ↓
+patch files
+  ↓
+run tests/builds/scans
+  ↓
+summarize fixed and remaining risk
+```
+
+## Inputs to inspect
+
+Prefer these files and commands:
+
+- `reports/security/trivy-fs.txt`
+- `reports/security/trivy-image.txt`
+- `reports/security/trivy-k8s-config.txt`
+- `src/api/pom.xml`
+- `src/api/Dockerfile`
+- `charts/tenderops/templates/`
+- `charts/tenderops/values.yaml`
+- `k8s/base/`
+- `scripts/security/scan-local.sh`
+- `docs/security-hardening.md`
+
+## Finding categories
+
+Classify each finding as one of:
+
+- Maven dependency vulnerability
+- Docker base image vulnerability
+- application image vulnerability
+- Kubernetes misconfiguration
+- Helm template misconfiguration
+- secret exposure
+- false positive
+- accepted residual risk
+
+## Remediation rules
+
+For Maven dependency findings:
+
+- prefer upgrading the affected dependency to the fixed version
+- run `cd src/api && ./mvnw clean test && cd ../..`
+- do not upgrade unrelated dependencies unless required
+
+For Docker image findings:
+
+- identify whether the issue comes from the app dependency or base image
+- prefer minimal base image changes
+- rebuild with `docker build -t tenderops-api:0.1.0 ./src/api`
+- do not introduce complex image registries unless requested
+
+For Kubernetes or Helm findings:
+
+- patch the active Helm chart first
+- keep `k8s/base/` consistent when practical
+- prefer explicit `securityContext`
+- prefer non-root containers
+- disable privilege escalation
+- drop Linux capabilities
+- use `readOnlyRootFilesystem` when compatible
+- add writable `emptyDir` mounts only where needed
+- use `seccompProfile: RuntimeDefault`
+
+## Validation commands
+
+After remediation, run the smallest relevant validation set.
+
+For Java/dependency changes:
+
+```bash
+cd src/api && ./mvnw clean test && cd ../..
+```
+
+For Docker image changes:
+
+```bash
+docker build -t tenderops-api:0.1.0 ./src/api
+```
+
+For Helm/Kubernetes changes:
+
+```bash
+helm lint charts/tenderops
+helm template tenderops charts/tenderops --namespace tenderops
+```
+
+For full security validation:
+
+```bash
+./scripts/security/scan-local.sh
+```
+
+## Output format
+
+When finished, summarize:
+
+1. Findings reviewed
+2. Files changed
+3. Validation commands run
+4. Findings fixed
+5. Findings remaining
+6. Any accepted residual risk
+7. Recommended next action
+
+## Hard restrictions
+
+Do not:
+
+- commit or push automatically
+- hide findings by deleting reports
+- add broad ignore rules without explicit justification
+- weaken security settings just to make tests pass
+- touch secrets or credentials
+- claim a finding is fixed without rerunning the relevant validation

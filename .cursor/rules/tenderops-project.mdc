@@ -1,0 +1,86 @@
+---
+description: Core project rules for TenderOps Lab
+globs: "**/*"
+alwaysApply: true
+---
+
+# TenderOps Lab Project Rules
+
+## Project purpose
+
+TenderOps Lab is a local-first DevOps and Kubernetes practice project.
+
+The main goal is to demonstrate the delivery workflow around a small Spring Boot API:
+
+- Maven build/test
+- Docker image build
+- Docker Compose
+- Kubernetes
+- Helm
+- Argo CD GitOps
+- Actuator observability
+- Trivy security scanning
+- controlled security remediation
+
+The application domain is intentionally simple. Do not overbuild the business logic unless explicitly requested.
+
+## Repository boundaries
+
+Respect the current repository structure:
+
+- `src/api/` contains the Spring Boot API.
+- `charts/tenderops/` contains the active Helm deployment.
+- `gitops/apps/` contains Argo CD Application manifests.
+- `k8s/base/` contains raw Kubernetes learning/reference manifests.
+- `scripts/ci/` contains CI helper scripts.
+- `scripts/security/` contains security scanning scripts.
+- `docs/` contains project documentation.
+- `agents/` and `.cursor/rules/` contain agent workflow instructions.
+
+## Safety rules
+
+Do not:
+
+- commit secrets, tokens, passwords, or kubeconfigs
+- push changes automatically
+- delete unrelated files
+- rewrite large parts of the project unnecessarily
+- modify generated reports as if they were source files
+- suppress security findings without written justification
+- change architecture without explaining why
+- run destructive commands without explicit user approval
+
+## Preferred workflow
+
+For code or configuration changes:
+
+1. Explain the intended change.
+2. Patch the smallest relevant files.
+3. Run the appropriate validation command.
+4. Summarize the result.
+5. Ask for human review before commit/push.
+
+## Local shell conventions
+
+Use Bash-compatible commands.
+
+Prefer commands that run from the repository root.
+
+Important validation commands:
+
+- `./scripts/ci/api-check.sh`
+- `./scripts/security/scan-local.sh`
+- `helm lint charts/tenderops`
+- `helm template tenderops charts/tenderops --namespace tenderops`
+- `kubectl get applications -n argocd`
+- `kubectl get pods -n tenderops`
+
+## Active deployment path
+
+The active deployment path is:
+
+```text
+Helm chart → Argo CD → Kubernetes
+```
+
+Raw manifests in `k8s/base/` are kept as learning/reference material and should stay consistent with the Helm chart when practical.
