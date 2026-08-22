@@ -124,9 +124,17 @@ Implemented:
 - reusable security remediation prompts
 - reusable security posture review runbook
 - reusable security posture review prompts
+- Prompt 1 full posture review executed in Cursor
+- Prompt 4 documentation update for posture review outcomes
+- CI security gates in `.github/workflows/security.yml` (Trivy fs/image/config, Helm lint, artifact upload)
+
+Posture review summary lives in:
+
+- `docs/security-hardening.md`
+- `docs/security-agent-roadmap.md`
+- `docs/ci-cd.md`
 
 Planned:
 
-- test the posture review workflow in Cursor
-- add CI security gate workflow
 - add additional runbooks only when a real repeated workflow emerges
+- refresh residual-risk documentation after future hardening changes

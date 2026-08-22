@@ -41,6 +41,7 @@ Expected response:
 - Docker multi-stage image build
 - Docker Compose with PostgreSQL
 - GitHub Actions CI workflow
+- GitHub Actions security workflow with Trivy gates and Helm lint
 - Local Kubernetes cluster with kind
 - Kubernetes Deployments, Services, Secrets, ConfigMaps, PVCs, probes, and resource limits
 - Helm chart for reusable deployment
@@ -48,6 +49,7 @@ Expected response:
 - Spring Boot Actuator health and metrics
 - Trivy security scanning for dependencies, images, secrets, and Kubernetes configuration
 - Kubernetes security hardening with non-root containers, dropped capabilities, read-only root filesystem, and seccomp profile
+- Cursor security remediation and posture review agent workflows
 
 ## Current delivery flow
 
@@ -58,7 +60,7 @@ Developer changes code or config
 Commit and push to GitHub
   |
   v
-GitHub Actions runs CI checks
+GitHub Actions runs CI checks and security gates
   |
   v
 Argo CD reads desired state from Git
@@ -152,6 +154,7 @@ observability/        Reserved for future observability stack configuration
 - `docs/project-goals.md`
 - `docs/observability.md`
 - `docs/security-hardening.md`
+- `docs/ci-cd.md`
 - `docs/learning-roadmap.md`
 - `docs/security-agent-roadmap.md`
 
@@ -165,6 +168,7 @@ Completed:
 - Docker Compose environment
 - PostgreSQL persistence
 - GitHub Actions CI
+- GitHub Actions security gates (Trivy + Helm lint)
 - local Kubernetes with kind
 - raw Kubernetes manifests
 - Helm chart
@@ -172,12 +176,13 @@ Completed:
 - Actuator health and metrics
 - Trivy security scanning
 - security remediation and Kubernetes hardening
+- Cursor security-agent workflows
+- security posture review documentation
 - interview-focused documentation
 
 Planned:
 
-- Cursor security-agent workflows
-- stricter CI security gates
+- NetworkPolicies and stronger secret handling
 - optional Prometheus/Grafana/Loki observability stack
 - optional Terraform/Azure extension
 - optional image registry flow
@@ -186,6 +191,6 @@ Planned:
 
 TenderOps Lab is a local DevOps delivery lab for a Spring Boot API.
 
-It uses Maven for build/test, Docker for packaging, Docker Compose for local multi-container development, kind for local Kubernetes, Helm for deployment packaging, Argo CD for GitOps delivery, Actuator for health and metrics, and Trivy for security scanning.
+It uses Maven for build/test, Docker for packaging, Docker Compose for local multi-container development, kind for local Kubernetes, Helm for deployment packaging, Argo CD for GitOps delivery, Actuator for health and metrics, and Trivy for local and CI security scanning.
 
 The project demonstrates the end-to-end path from code to container to Kubernetes deployment, including observability and security hardening.

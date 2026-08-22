@@ -17,6 +17,9 @@ Implemented:
 - reusable posture review prompts
 - agent documentation in `agents/`
 - Cursor-specific documentation in `agents/cursor/`
+- full security posture review executed in Cursor
+- posture review documentation update
+- CI security gates in `.github/workflows/security.yml`
 
 Relevant files:
 
@@ -29,6 +32,8 @@ Relevant files:
 - `agents/cursor/security-remediation-prompts.md`
 - `agents/cursor/security-posture-review-agent.md`
 - `agents/cursor/security-posture-review-prompts.md`
+- `.github/workflows/security.yml`
+- `docs/security-hardening.md`
 
 ## Security Remediation Agent
 
@@ -83,6 +88,18 @@ Expected workflow:
 2. Review strengths, gaps, risks, and recommended improvements.
 3. Decide which recommendations to implement.
 4. Create follow-up implementation tasks separately.
+5. After approval, use Prompt 4 to update documentation only.
+
+### Latest posture review outcome
+
+The first full posture review confirmed:
+
+- strong local hardening baseline (non-root, capabilities drop, read-only root filesystem, seccomp, probes, API resource limits)
+- useful local Trivy workflow and agent runbooks
+- CI security gates now implemented via `.github/workflows/security.yml`
+- remaining gaps that are acceptable for local lab but required for production: external secrets, NetworkPolicies, registry promotion, auth, backups, alerting
+
+Accepted residual risks for the lab are documented in `docs/security-hardening.md`.
 
 ## Finding categories
 
@@ -163,8 +180,8 @@ Agents may propose and apply local edits after approval, but a human should revi
 
 Planned future improvements:
 
-- test the posture review workflow in Cursor
-- add CI security gates for critical findings
-- add a documentation consistency agent only if the workflow becomes repetitive
-- add a Kubernetes hardening agent only if there are repeated Kubernetes-focused tasks
-- document accepted residual risk handling
+- add NetworkPolicies and PostgreSQL resource limits
+- move secrets out of committed values
+- add image registry promotion
+- keep accepted residual risk documentation current after remediation cycles
+- add additional agent runbooks only when repeated workflows emerge

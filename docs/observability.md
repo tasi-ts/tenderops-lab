@@ -41,4 +41,8 @@ This lab currently demonstrates:
 - container logs
 - Kubernetes events
 
-A future extension could add Prometheus, Grafana, Loki, or OpenTelemetry.
+## Security note for Actuator exposure
+
+Actuator endpoints are useful for local troubleshooting, but they can reveal operational detail. This lab currently exposes health, info, and metrics and shows health details. That is acceptable for a local port-forward demo. In production, Actuator should be authenticated, network-restricted, and configured with reduced detail.
+
+A future extension could add Prometheus, Grafana, Loki, or OpenTelemetry. There is no alerting stack yet.

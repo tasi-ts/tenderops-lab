@@ -21,11 +21,13 @@ This roadmap tracks the practical learning path used in the TenderOps Lab projec
 - Added local Trivy security scanning.
 - Remediated dependency, image, and Kubernetes hardening findings.
 - Added interview demo documentation.
+- Added Cursor security-agent workflows.
+- Executed a full security posture review and updated security documentation.
+- Added CI security gates with Trivy and Helm lint (`.github/workflows/security.yml`).
 
 ## Planned
 
-- Add Cursor security-agent workflows.
-- Add stricter CI security gates.
+- Add NetworkPolicies and stronger secret handling.
 - Add Prometheus/Grafana or another monitoring stack.
 - Add a lightweight Terraform/Azure example.
 - Publish images to a registry instead of loading them directly into kind.

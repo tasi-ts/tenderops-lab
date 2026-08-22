@@ -58,6 +58,7 @@ GitHub repository
   +-- GitHub Actions
   |     +-- Maven tests
   |     +-- Docker build
+  |     +-- Trivy security gates + Helm lint
   |
   +-- Argo CD
         +-- watches Helm chart in Git
@@ -79,4 +80,5 @@ Trivy
   +-- secret scan
   +-- Docker image scan
   +-- Kubernetes/Helm misconfiguration scan
+  +-- CI security gates in GitHub Actions
 ```

@@ -88,6 +88,7 @@ For posture review work:
 2. Review strengths, gaps, risks, and recommended improvements.
 3. Decide which improvements to implement.
 4. Create follow-up implementation tasks separately.
+5. After approval, use Prompt 4 to update documentation only.
 
 ## Current status
 
@@ -101,9 +102,11 @@ Implemented:
 - reusable posture review runbook
 - reusable posture review prompts
 - Cursor agent README
+- full security posture review executed in Cursor
+- posture review documentation update
+- CI security gates via `.github/workflows/security.yml`
 
 Planned:
 
-- test the posture review workflow in Cursor
-- add CI security gate workflow
 - add additional agent runbooks only when repeated workflows emerge
+- keep posture and residual-risk docs current after future hardening work

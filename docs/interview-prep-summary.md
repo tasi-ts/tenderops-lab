@@ -132,17 +132,27 @@ Why it matters:
 
 ### GitHub Actions
 
-Used for CI.
+Used for CI and security gates.
 
-Current CI validates:
+Current functional CI (`.github/workflows/ci.yml`) validates:
 
 - Maven tests
 - Docker image build
+
+Current security workflow (`.github/workflows/security.yml`) validates:
+
+- Helm lint
+- Trivy filesystem scan
+- Trivy image scan
+- Trivy rendered Kubernetes config scan
+- report artifact upload
+- fail on HIGH/CRITICAL findings
 
 Why it matters:
 
 - automated verification on push/PR
 - demonstrates basic continuous integration
+- demonstrates CI security gates, not only local scanning
 - reduces reliance on manual local checks
 
 ### kind
@@ -220,7 +230,7 @@ Why it matters:
 
 ### Trivy
 
-Used for local security scanning.
+Used for local and CI security scanning.
 
 Current scan workflow covers:
 
@@ -228,12 +238,13 @@ Current scan workflow covers:
 - secret scanning
 - Docker image vulnerability scanning
 - Helm-rendered Kubernetes misconfiguration scanning
+- CI enforcement of HIGH/CRITICAL findings via `.github/workflows/security.yml`
 
 Why it matters:
 
 - demonstrates DevSecOps awareness
 - turns vulnerabilities/misconfigurations into actionable remediation work
-- can later be made stricter in CI
+- shows the difference between local advisory scans and CI security gates
 
 ## 4. Delivery flow
 
@@ -569,7 +580,7 @@ scan → fix → rebuild/redeploy → rescan → compare results
 
 ## 8. Security hardening summary
 
-The project added local Trivy scanning and then remediated findings.
+The project added local Trivy scanning, remediated findings, ran a broader security posture review, and added CI security gates.
 
 Examples of security work performed:
 
@@ -583,6 +594,8 @@ Examples of security work performed:
 - added temporary writable volumes where needed
 - added seccomp `RuntimeDefault`
 - kept generated reports out of Git
+- added `.github/workflows/security.yml` with Trivy fs/image/config scans, Helm lint, and artifact upload
+- documented local-lab limitations, production gaps, and accepted residual risks
 
 Security context examples included:
 
@@ -593,6 +606,12 @@ readOnlyRootFilesystem: true
 capabilities.drop: ALL
 seccompProfile: RuntimeDefault
 ```
+
+Important distinction:
+
+- implemented: local hardening + CI security gates
+- acceptable for local lab: demo credentials, no auth, no NetworkPolicies, local images
+- still needed for production: external secrets, network isolation, registry promotion, backups, alerting, API auth
 
 ## 9. Observability summary
 
@@ -651,13 +670,13 @@ The app is intentionally small because the purpose of the project is to demonstr
 ### Good answer if asked what you would improve next
 
 ```text
-Next I would add image publishing to a registry, stricter CI security gates, Prometheus/Grafana, external secrets, NetworkPolicies, and a small Terraform/Azure version of the infrastructure.
+Next I would add NetworkPolicies, move secrets out of Git, publish images to a registry, add Prometheus/Grafana, and optionally a small Terraform/Azure version of the infrastructure. CI security gates with Trivy are already in place.
 ```
 
 ### Good answer if asked about production readiness
 
 ```text
-This is not production-ready yet. It is a local lab that demonstrates the workflow. For production, I would add proper secret management, registry-based image promotion, environment-specific values, stronger network policies, monitoring/alerting, backup/restore for PostgreSQL, and cloud infrastructure managed with Terraform.
+This is not production-ready yet. It is a local lab that demonstrates the workflow. We already have container hardening and CI Trivy gates, but for production I would still add proper secret management, registry-based image promotion, environment-specific values, NetworkPolicies, monitoring/alerting, backup/restore for PostgreSQL, and cloud infrastructure managed with Terraform.
 ```
 
 ## 11. Current project status
@@ -670,6 +689,7 @@ Completed:
 - Docker image
 - Docker Compose with PostgreSQL
 - GitHub Actions CI
+- GitHub Actions security gates (Trivy + Helm lint)
 - local Kubernetes with kind
 - raw Kubernetes manifests
 - Helm chart
@@ -679,13 +699,14 @@ Completed:
 - Actuator health and metrics
 - Trivy security scanning
 - security remediation/hardening
+- Cursor security-agent workflows
+- security posture review and documentation update
 - project documentation cleanup
 - interview demo guide
 
 Planned:
 
-- Cursor security-agent workflows
-- update agent documentation after implementation
+- NetworkPolicies and stronger secret handling
 - optional monitoring stack
 - optional Terraform/Azure extension
 - optional image registry flow

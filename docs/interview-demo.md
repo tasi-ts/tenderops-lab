@@ -149,13 +149,12 @@ Actuator provides application-level health and metrics. Kubernetes can use healt
 
 ### Why Trivy?
 
-Trivy gives a practical DevSecOps control by scanning dependencies, container images, secrets, and Kubernetes misconfigurations.
+Trivy gives a practical DevSecOps control by scanning dependencies, container images, secrets, and Kubernetes misconfigurations. The project uses it both locally and as CI security gates in `.github/workflows/security.yml`.
 
 ## What I would improve next
 
 - Add Prometheus and Grafana.
 - Add Loki or another centralized logging stack.
-- Add CI security gates for critical findings.
 - Publish images to a registry instead of loading them locally into kind.
 - Add Terraform for Azure infrastructure.
 - Add separate dev/stage values files.
