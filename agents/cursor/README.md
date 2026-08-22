@@ -1,55 +1,74 @@
 # Cursor Agents
 
-This directory is reserved for Cursor-specific agent instructions.
+This directory contains Cursor-specific agent workflow documentation for TenderOps Lab.
 
-The current interview demo does not depend on Cursor agents. This area is intended for follow-up experimentation with agent-assisted DevSecOps workflows.
+The current focus is a security remediation workflow that helps process Trivy findings and turn them into controlled, reviewable changes.
 
-## Planned agent types
+## Implemented runbooks
 
-Possible future agents:
+- `agents/cursor/security-remediation-agent.md`
 
-- security finding triage agent
-- dependency remediation agent
-- Kubernetes hardening agent
-- documentation update agent
-- test-and-rescan agent
+This runbook defines how a Cursor agent should:
 
-## Intended workflow
+- read Trivy reports
+- classify findings
+- identify affected files
+- propose minimal remediation
+- patch files
+- run validation commands
+- summarize fixed and remaining risk
 
-```text
-Scanner output
-  |
-  v
-Cursor agent reviews findings
-  |
-  v
-Agent proposes controlled changes
-  |
-  v
-Human reviews the diff
-  |
-  v
-Tests and scans are rerun
-  |
-  v
-Changes are committed
-```
+## Cursor project rules
 
-## Guardrails
+The repo also contains Cursor project rules in `.cursor/rules/`.
 
-Cursor agents should follow these rules:
+Current rules:
 
-- stay within the current repository
-- avoid unrelated refactoring
-- do not touch secrets or credentials
-- do not push changes automatically
-- explain every proposed change
-- run tests after code changes
-- rerun scans after security changes
-- summarize residual findings honestly
+- `.cursor/rules/tenderops-project.mdc`
+- `.cursor/rules/security-remediation-agent.mdc`
+
+These rules define project boundaries, safety constraints, validation commands, and security remediation behavior.
+
+## Recommended Cursor workflow
+
+1. Open this repository in Cursor.
+2. Make sure the latest Trivy reports exist by running `./scripts/security/scan-local.sh`.
+3. Open Cursor Agent mode.
+4. Use the prompt from `agents/cursor/security-remediation-agent.md`.
+5. Let the agent analyze findings and propose small patches.
+6. Review the diff manually.
+7. Run validation commands.
+8. Commit only after human review.
+
+## Important guardrails
+
+Cursor agents should not:
+
+- commit automatically
+- push automatically
+- expose secret values
+- delete unrelated files
+- suppress findings without justification
+- make broad architecture changes without explanation
+
+## Useful validation commands
+
+- `./scripts/ci/api-check.sh`
+- `./scripts/security/scan-local.sh`
+- `helm lint charts/tenderops`
+- `helm template tenderops charts/tenderops --namespace tenderops`
+- `kubectl get applications -n argocd`
+- `kubectl get pods -n tenderops`
 
 ## Current status
 
-Not implemented yet.
+Implemented:
 
-This folder documents the intended location for future Cursor agent instruction files.
+- project-wide Cursor rule
+- security remediation Cursor rule
+- reusable security remediation runbook
+
+Planned:
+
+- test the security remediation workflow on a real future finding
+- add additional runbooks for documentation updates or Kubernetes hardening
