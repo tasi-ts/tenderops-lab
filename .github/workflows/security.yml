@@ -31,7 +31,7 @@ jobs:
           helm template tenderops charts/tenderops --namespace tenderops > reports/security/rendered-manifests.yaml
 
       - name: Trivy filesystem scan
-        uses: aquasecurity/trivy-action@0.36.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: fs
           scan-ref: .
@@ -43,7 +43,7 @@ jobs:
           output: reports/security/trivy-fs.txt
 
       - name: Trivy image scan
-        uses: aquasecurity/trivy-action@0.36.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: image
           image-ref: tenderops-api:0.1.0
@@ -55,7 +55,7 @@ jobs:
           output: reports/security/trivy-image.txt
 
       - name: Trivy rendered Kubernetes config scan
-        uses: aquasecurity/trivy-action@0.36.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: config
           scan-ref: reports/security/rendered-manifests.yaml
