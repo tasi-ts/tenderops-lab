@@ -1,0 +1,73 @@
+name: Security
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  trivy-security:
+    name: Trivy security checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Build API image
+        run: docker build -t tenderops-api:0.1.0 ./src/api
+
+      - name: Render Helm chart
+        run: |
+          mkdir -p reports/security
+          helm template tenderops charts/tenderops --namespace tenderops > reports/security/rendered-manifests.yaml
+
+      - name: Trivy filesystem scan
+        uses: aquasecurity/trivy-action@0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln,secret,misconfig
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+          format: table
+          output: reports/security/trivy-fs.txt
+
+      - name: Trivy image scan
+        uses: aquasecurity/trivy-action@0.36.0
+        with:
+          scan-type: image
+          image-ref: tenderops-api:0.1.0
+          scanners: vuln,secret
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+          format: table
+          output: reports/security/trivy-image.txt
+
+      - name: Trivy rendered Kubernetes config scan
+        uses: aquasecurity/trivy-action@0.36.0
+        with:
+          scan-type: config
+          scan-ref: reports/security/rendered-manifests.yaml
+          severity: HIGH,CRITICAL
+          exit-code: '1'
+          format: table
+          output: reports/security/trivy-k8s-config.txt
+
+      - name: Upload security reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-security-reports
+          path: reports/security/
+          retention-days: 14
