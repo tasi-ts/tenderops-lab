@@ -61,6 +61,8 @@ spec:
               mountPath: /var/run/postgresql
             - name: tmp
               mountPath: /tmp
+          resources:
+{{ toYaml .Values.db.resources | indent 12 }}
           readinessProbe:
             exec:
               command:
