@@ -26,7 +26,6 @@ db:
   port: 5432
   database: tenderops
   username: tenderops
-  password: tenderops
   storage: 1Gi
   resources:
     requests:
@@ -38,3 +37,8 @@ db:
 
 networkPolicy:
   enabled: true
+
+secrets:
+  create: false
+  apiSecretName: tenderops-api-runtime-secret
+  dbSecretName: tenderops-db-runtime-secret

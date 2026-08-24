@@ -42,3 +42,6 @@ secrets/
 
 # Generated security reports
 reports/security/
+
+# Local Helm override files may contain demo credentials
+charts/tenderops/values-local.yaml
