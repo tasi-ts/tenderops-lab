@@ -9,7 +9,7 @@ api:
   profile: local
   observability:
     exposedEndpoints: "health,info,metrics"
-    showHealthDetails: "always"
+    showHealthDetails: "always" # local-only; use "never" or "when_authorized" outside local demos
   resources:
     requests:
       cpu: "100m"
