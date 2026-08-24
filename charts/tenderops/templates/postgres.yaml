@@ -1,13 +1,15 @@
+{{- if .Values.secrets.create }}
 apiVersion: v1
 kind: Secret
 metadata:
-  name: {{ .Values.db.name }}-secret
+  name: {{ .Values.secrets.dbSecretName }}
 type: Opaque
 stringData:
   POSTGRES_DB: {{ .Values.db.database | quote }}
   POSTGRES_USER: {{ .Values.db.username | quote }}
-  POSTGRES_PASSWORD: {{ .Values.db.password | quote }}
+  POSTGRES_PASSWORD: {{ required "db.password is required when secrets.create=true" .Values.db.password | quote }}
 ---
+{{- end }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -53,7 +55,7 @@ spec:
             - containerPort: {{ .Values.db.port }}
           envFrom:
             - secretRef:
-                name: {{ .Values.db.name }}-secret
+                name: {{ .Values.secrets.dbSecretName }}
           volumeMounts:
             - name: db-data
               mountPath: /var/lib/postgresql/data

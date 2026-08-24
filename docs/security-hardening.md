@@ -46,6 +46,45 @@ On pushes to `main` and on pull requests, the workflow:
 
 This is separate from the functional CI workflow in `.github/workflows/ci.yml`, which still runs Maven tests and Docker image build.
 
+### Runtime secrets
+
+The Helm chart no longer stores the database password in `values.yaml`.
+
+Instead, the chart references pre-existing Kubernetes Secrets:
+
+- `tenderops-api-runtime-secret`
+- `tenderops-db-runtime-secret`
+
+For the local kind/Argo CD lab, these runtime Secrets must exist in the `tenderops` namespace before the application is synced:
+
+```bash
+kubectl create secret generic tenderops-db-runtime-secret \
+  -n tenderops \
+  --from-literal=POSTGRES_DB=tenderops \
+  --from-literal=POSTGRES_USER=tenderops \
+  --from-literal=POSTGRES_PASSWORD=tenderops \
+  --dry-run=client -o yaml | kubectl apply -f -
+
+kubectl create secret generic tenderops-api-runtime-secret \
+  -n tenderops \
+  --from-literal=SPRING_DATASOURCE_USERNAME=tenderops \
+  --from-literal=SPRING_DATASOURCE_PASSWORD=tenderops \
+  --dry-run=client -o yaml | kubectl apply -f -
+```
+
+These are local demo credentials only.
+
+The important security improvement is that the active Helm/GitOps path no longer derives runtime passwords from committed chart values.
+
+In production, these Secrets should be created by an external secret-management workflow, such as:
+
+- External Secrets Operator
+- SOPS-encrypted values
+- Sealed Secrets
+- HashiCorp Vault
+- Azure Key Vault
+- CI/CD-controlled secret injection
+
 ### Container and Kubernetes hardening
 
 The API container includes:
@@ -54,7 +93,7 @@ The API container includes:
 - non-root runtime user (`10001`)
 - Kubernetes readiness and liveness probes
 - API resource requests and limits
-- configuration separated into ConfigMaps and Secrets
+- configuration separated into ConfigMaps and referenced Secrets
 - private GitOps repository access configured through Argo CD repository credentials
 
 The Kubernetes deployment includes:
@@ -62,8 +101,10 @@ The Kubernetes deployment includes:
 - internal ClusterIP services
 - API and database separated into different Deployments
 - PostgreSQL persistent volume claim
+- PostgreSQL resource requests and limits
 - Helm-managed configuration
 - Argo CD automated sync with self-healing and pruning
+- NetworkPolicy restricting PostgreSQL ingress to API Pods on TCP 5432
 - pod and container security contexts:
   - `runAsNonRoot: true`
   - `allowPrivilegeEscalation: false`
@@ -82,9 +123,9 @@ The Kubernetes deployment includes:
 
 These are acceptable for a kind/Docker Desktop portfolio lab:
 
-- demo database credentials committed in Helm values / Compose for reproducibility
+- local demo credentials exist in manually created Kubernetes Secrets
+- Docker Compose still uses demo credentials for local reproducibility
 - no API authentication or authorization
-- no NetworkPolicies
 - no Ingress or TLS termination
 - local image tags loaded into kind instead of registry promotion
 - Actuator exposed on the main application port for local inspection
@@ -96,8 +137,8 @@ These are acceptable for a kind/Docker Desktop portfolio lab:
 
 Required before any real production deployment:
 
-- external secret management and no plaintext credentials in Git
-- NetworkPolicies and stronger cluster network isolation
+- external secret management and secret rotation
+- no manually created long-lived production Secrets
 - registry-based image build, push, and promotion with immutable tags or digests
 - API authentication and authorization
 - managed or operable PostgreSQL backup/restore
@@ -105,24 +146,24 @@ Required before any real production deployment:
 - centralized logs, dashboards, and alerting
 - restricted Actuator exposure outside the cluster (auth, separate management network/port, reduced detail)
 - image signing and SBOM generation
-- PostgreSQL resource requests and limits
 - tested incident and restore runbooks
+- stronger GitOps guardrails, such as AppProjects, environment separation, and production approval gates
 
 ## Recommended next improvements
 
 Short term:
 
-1. Add NetworkPolicies for API ↔ PostgreSQL traffic.
-2. Add PostgreSQL resource requests and limits.
-3. Consolidate Flyway execution so only one migration path runs at startup.
-4. Restrict Actuator detail and endpoints for non-local profiles.
+1. Document the runtime secret prerequisite in the chart documentation.
+2. Add a production-shaped secret-management option, such as SOPS, External Secrets, or Sealed Secrets.
+3. Restrict Actuator detail and endpoints for non-local profiles.
+4. Revisit the Flyway startup strategy and document why the custom migration runner is currently retained.
 
 Medium term:
 
-1. Move secrets out of committed values (External Secrets, SOPS, or equivalent).
-2. Publish images to a registry and promote by digest/tag from CI.
+1. Publish images to a registry and promote by digest/tag from CI.
+2. Add PodDisruptionBudget and dedicated ServiceAccounts.
 3. Document accepted residual risks after each remediation cycle.
-4. Add PodDisruptionBudget and dedicated ServiceAccounts.
+4. Add environment-specific Helm values for local and prod-like deployments.
 
 Later / optional portfolio enhancements:
 
@@ -135,9 +176,10 @@ Later / optional portfolio enhancements:
 
 Accepted for the current local-lab scope:
 
-- demo credentials in Git and rendered manifests for local reproducibility
+- local demo credentials are used in manually created Kubernetes Secrets
+- Docker Compose still contains demo credentials for reproducible local development
 - unauthenticated API surface in a non-public local cluster
-- no NetworkPolicies while access is primarily via `kubectl port-forward`
+- no Ingress/TLS because access is via local development paths
 - no full monitoring/alerting stack
 - no cloud secret manager or managed database
 - local scan script does not fail the shell process on findings; CI security workflow enforces gates instead
@@ -146,4 +188,6 @@ These residual risks are intentional for a learning/demo environment and must no
 
 ## Actuator security note
 
-This lab exposes health, info, and metrics Actuator endpoints and currently shows health details. In production, Actuator endpoints should be restricted because exposed management endpoints may reveal sensitive operational information.
+This lab exposes health, info, and metrics Actuator endpoints and currently shows health details for local inspection.
+
+In production, Actuator endpoints should be restricted because exposed management endpoints may reveal sensitive operational information. A production-style deployment should reduce exposed endpoints, avoid `show-details: always`, and protect management endpoints through authentication, network isolation, or a separate management path.

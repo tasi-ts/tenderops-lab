@@ -1,0 +1,51 @@
+# Example production-style values.
+#
+# This file is intentionally not ready to deploy as-is.
+# Do not commit real production secrets here.
+#
+# In production, credentials should come from an external secret manager,
+# encrypted values workflow, or CI/CD-controlled secret injection.
+
+api:
+  profile: prod
+  replicas: 2
+  image:
+    repository: ghcr.io/REPLACE_ME/tenderops-api
+    tag: "REPLACE_WITH_IMMUTABLE_TAG_OR_DIGEST"
+    pullPolicy: IfNotPresent
+  port: 8080
+  observability:
+    exposedEndpoints: "health,info"
+    showHealthDetails: "never"
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+db:
+  name: tenderops-db
+  image:
+    repository: postgres
+    tag: "16-alpine"
+  port: 5432
+  database: tenderops
+  username: tenderops
+  storage: 10Gi
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "1"
+      memory: "1Gi"
+
+networkPolicy:
+  enabled: true
+
+secrets:
+  create: false
+  apiSecretName: tenderops-api-runtime-secret
+  dbSecretName: tenderops-db-runtime-secret
