@@ -8,7 +8,7 @@ api:
   port: 8080
   profile: local
   observability:
-    exposedEndpoints: "health,info,metrics"
+    exposedEndpoints: "health,info,metrics,prometheus"
     showHealthDetails: "always" # local-only; use "never" or "when_authorized" outside local demos
   resources:
     requests:

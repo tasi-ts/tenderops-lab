@@ -29,6 +29,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/tenderops
       SPRING_DATASOURCE_USERNAME: tenderops
       SPRING_DATASOURCE_PASSWORD: tenderops
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,info,metrics,prometheus
+      MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: always
     depends_on:
       db:
         condition: service_healthy
