@@ -11,6 +11,7 @@ api:
   replicas: 2
   image:
     repository: ghcr.io/tasi-ts/tenderops-api
+    # The `main` tag is convenient for demos.
     # Prefer immutable sha-* tags or digests for real promotion.
     tag: "main"
     pullPolicy: IfNotPresent
