@@ -1,14 +1,4 @@
 apiVersion: v1
-kind: Secret
-metadata:
-  name: tenderops-api-secret
-  namespace: tenderops
-type: Opaque
-stringData:
-  SPRING_DATASOURCE_USERNAME: tenderops
-  SPRING_DATASOURCE_PASSWORD: tenderops
----
-apiVersion: v1
 kind: ConfigMap
 metadata:
   name: tenderops-api-config
@@ -57,7 +47,7 @@ spec:
             - configMapRef:
                 name: tenderops-api-config
             - secretRef:
-                name: tenderops-api-secret
+                name: tenderops-api-runtime-secret
           volumeMounts:
             - name: tmp
               mountPath: /tmp

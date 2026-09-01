@@ -1,3 +1,6 @@
+# Local-only Grafana credentials for the kind demo.
+# Replace with secret-backed configuration outside local use.
+
 grafana:
   enabled: true
   adminUser: admin

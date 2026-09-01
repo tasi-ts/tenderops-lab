@@ -5,7 +5,7 @@ spring:
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/tenderops}
     username: ${SPRING_DATASOURCE_USERNAME:tenderops}
-    password: ${SPRING_DATASOURCE_PASSWORD:tenderops}
+    password: ${SPRING_DATASOURCE_PASSWORD}
 
   flyway:
     enabled: true
