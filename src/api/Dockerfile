@@ -16,6 +16,8 @@ RUN ./mvnw clean package -DskipTests
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
+RUN apk upgrade --no-cache
+
 RUN addgroup -S -g 10001 appgroup \
     && adduser -S -D -H -u 10001 -G appgroup appuser
 
