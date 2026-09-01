@@ -1,3 +1,7 @@
+# Local-only Docker Compose stack.
+# Uses demo credentials for one-command local development.
+# Do not reuse these values in shared, staging, or production environments.
+
 services:
   db:
     image: postgres:16-alpine
