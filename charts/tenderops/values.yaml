@@ -10,6 +10,10 @@ api:
   observability:
     exposedEndpoints: "health,info,metrics,prometheus"
     showHealthDetails: "always" # local-only; use "never" or "when_authorized" outside local demos
+    serviceMonitor:
+      enabled: true
+      interval: 15s
+      scrapeTimeout: 10s
   resources:
     requests:
       cpu: "100m"

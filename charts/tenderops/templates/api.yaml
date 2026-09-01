@@ -88,5 +88,7 @@ spec:
   selector:
     app: {{ .Values.api.name }}
   ports:
-    - port: {{ .Values.api.port }}
+    - protocol: TCP
+      name: http
+      port: {{ .Values.api.port }}
       targetPort: {{ .Values.api.port }}
