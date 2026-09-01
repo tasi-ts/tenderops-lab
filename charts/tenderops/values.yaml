@@ -14,6 +14,8 @@ api:
       enabled: true
       interval: 15s
       scrapeTimeout: 10s
+    dashboard:
+      enabled: true
   resources:
     requests:
       cpu: "100m"
