@@ -38,7 +38,7 @@ docs/architecture.md
 docs/project-goals.md
 docs/security-hardening.md
 docs/observability.md
-docs/interview-prep-summary.md
+docs/project-review-summary.md
 scripts/security/scan-local.sh
 .github/workflows/
 src/api/pom.xml

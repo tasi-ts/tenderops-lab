@@ -20,14 +20,18 @@ This roadmap tracks the practical learning path used in the TenderOps Lab projec
 - Added Actuator health and metrics.
 - Added local Trivy security scanning.
 - Remediated dependency, image, and Kubernetes hardening findings.
-- Added interview demo documentation.
+- Added project walkthrough and public-release documentation.
 - Added Cursor security-agent workflows.
 - Executed a full security posture review and updated security documentation.
 - Added CI security gates with Trivy and Helm lint (`.github/workflows/security.yml`).
+- Added GHCR image publishing.
+- Added runtime Kubernetes Secrets outside Helm values.
+- Added a PostgreSQL NetworkPolicy.
+- Added a local Prometheus/Grafana stack with ServiceMonitor scraping.
 
 ## Planned
 
-- Add NetworkPolicies and stronger secret handling.
-- Add Prometheus/Grafana or another monitoring stack.
-- Add a lightweight Terraform/Azure example.
-- Publish images to a registry instead of loading them directly into kind.
+- Promote GHCR images into kind by digest or public pull.
+- Add Loki, alerting, and tracing.
+- Add a lightweight Terraform/Azure example as a later optional segment.
+- Add external secret management beyond local runtime Secrets.

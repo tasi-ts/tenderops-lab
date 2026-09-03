@@ -97,7 +97,7 @@ The first full posture review confirmed:
 - strong local hardening baseline (non-root, capabilities drop, read-only root filesystem, seccomp, probes, API resource limits)
 - useful local Trivy workflow and agent runbooks
 - CI security gates now implemented via `.github/workflows/security.yml`
-- remaining gaps that are acceptable for local lab but required for production: external secrets, NetworkPolicies, registry promotion, auth, backups, alerting
+- remaining gaps that are acceptable for local lab but required for production: external secrets, broader NetworkPolicies, registry promotion, auth, backups, alerting
 
 Accepted residual risks for the lab are documented in `docs/security-hardening.md`.
 

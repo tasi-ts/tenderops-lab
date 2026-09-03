@@ -89,7 +89,7 @@ Review TenderOps Lab as a GitHub portfolio project.
 
 Do not edit files.
 
-Focus on what would make the project more credible, understandable, and impressive to a technical interviewer.
+Focus on what would make the project more credible, understandable, and useful for public project review.
 
 Evaluate:
 
@@ -129,7 +129,7 @@ Update relevant files such as:
 
 - `docs/security-hardening.md`
 - `docs/security-agent-roadmap.md`
-- `docs/interview-prep-summary.md`
+- `docs/project-review-summary.md`
 - `agents/README.md`
 - `agents/cursor/README.md`
 

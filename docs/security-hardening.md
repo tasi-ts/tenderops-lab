@@ -160,14 +160,14 @@ Short term:
 
 Medium term:
 
-1. Publish images to a registry and promote by digest/tag from CI.
+1. Pull GHCR images into kind and promote by digest/tag from CI.
 2. Add PodDisruptionBudget and dedicated ServiceAccounts.
 3. Document accepted residual risks after each remediation cycle.
 4. Add environment-specific Helm values for local and prod-like deployments.
 
 Later / optional portfolio enhancements:
 
-1. Prometheus/Grafana/Loki observability stack
+1. Loki, Alertmanager rules, and tracing
 2. Terraform/Azure infrastructure example
 3. container image signing and SBOM generation
 4. API authentication demo

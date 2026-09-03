@@ -25,4 +25,4 @@ Tradeoffs:
 
 - More moving parts than raw manifests.
 - Argo CD needs repository credentials for private GitHub repositories.
-- Local kind image loading is still required until a container registry is introduced.
+- Local kind image loading is still required until GHCR visibility or an imagePullSecret allows the cluster to pull published images. GHCR publish exists; the default Helm image remains `tenderops-api:0.1.0`.
