@@ -1,6 +1,6 @@
 # Learning Roadmap
 
-This roadmap tracks the practical learning path used in the TenderOps Lab project.
+This roadmap tracks the practical learning path used in the TenderOps Lab project. Hub: [README.md](../README.md). Goals: [docs/project-goals.md](project-goals.md).
 
 ## Completed
 

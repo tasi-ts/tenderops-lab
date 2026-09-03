@@ -1,6 +1,6 @@
 # Helm Charts
 
-This directory contains the Helm chart used to deploy TenderOps Lab.
+This directory contains the Helm chart that Argo CD deploys for TenderOps Lab.
 
 ## Chart
 
@@ -8,49 +8,19 @@ This directory contains the Helm chart used to deploy TenderOps Lab.
 charts/tenderops
 ```
 
-The chart deploys:
+The chart renders:
 
-- Spring Boot API
-- PostgreSQL database
-- Kubernetes Secrets
-- Kubernetes ConfigMaps
-- Kubernetes Services
-- PersistentVolumeClaim for PostgreSQL
-- readiness and liveness probes
-- resource requests and limits
-- basic container security contexts
+- Spring Boot API Deployment, Service, and ConfigMap
+- PostgreSQL Deployment, Service, and PersistentVolumeClaim
+- readiness and liveness probes, resource requests and limits, container security contexts
+- a PostgreSQL NetworkPolicy
+- a ServiceMonitor and a Grafana dashboard ConfigMap (when enabled in values)
 
-## Useful commands
-
-Render the chart locally:
-
-```bash
-helm template tenderops charts/tenderops --namespace tenderops
-```
-
-Validate the chart:
-
-```bash
-helm lint charts/tenderops
-```
-
-Install manually:
-
-```bash
-helm install tenderops charts/tenderops --namespace tenderops --create-namespace
-```
-
-Upgrade manually:
-
-```bash
-helm upgrade tenderops charts/tenderops --namespace tenderops
-```
+By default it **references** pre-created runtime Secrets. It does not render Secret objects. See [Runtime secrets](#runtime-secrets).
 
 ## Current role
 
-In the current project, Argo CD manages this Helm chart from Git.
-
-The preferred deployment flow is:
+Argo CD syncs this chart from Git. Preferred flow:
 
 ```text
 Change Helm chart or values
@@ -62,16 +32,18 @@ Commit and push to GitHub
 Argo CD syncs the change into Kubernetes
 ```
 
+Application manifest: [gitops/apps/README.md](../gitops/apps/README.md). Do not `helm install` / `helm upgrade` this release during normal GitOps use.
+
 ## Runtime secrets
 
-The TenderOps Helm chart does not commit runtime database passwords in `values.yaml`.
+The chart does not commit the database password in `values.yaml`.
 
-By default, the chart expects these Kubernetes Secrets to already exist:
+Default Secret names that must already exist in namespace `tenderops`:
 
 - `tenderops-api-runtime-secret`
 - `tenderops-db-runtime-secret`
 
-Create them in the local kind namespace before syncing the Argo CD application:
+Create them before the Argo CD Application can become healthy:
 
 ```bash
 kubectl create secret generic tenderops-db-runtime-secret \
@@ -88,56 +60,45 @@ kubectl create secret generic tenderops-api-runtime-secret \
   --dry-run=client -o yaml | kubectl apply -f -
 ```
 
-These are local demo credentials only.
+The same commands appear in [docs/demo-commands.md](../docs/demo-commands.md). These are local demo credentials only.
 
-Production credentials should be provided by a real secret-management workflow, such as External Secrets, SOPS, Sealed Secrets, Vault, Azure Key Vault, or CI/CD-controlled secret injection.
+Production credentials should come from External Secrets, SOPS, Sealed Secrets, Vault, Azure Key Vault, or CI/CD-controlled injection.
 
 ## Values files
 
-The chart uses:
-
-- `values.yaml` for common defaults
-- `values-prod-example.yaml` as a production-shaped example
-- `values-local.yaml` only as an optional local override file
-
-`values-local.yaml` is gitignored because local override files may contain demo credentials.
+- `values.yaml` — common defaults
+- `values-prod-example.yaml` — production-shaped example
+- `values-local.yaml` — optional local override (gitignored; may contain demo credentials)
 
 ## Secret rendering behavior
-
-The chart supports two secret modes:
 
 ```yaml
 secrets:
   create: false
 ```
 
-This is the default mode. Helm does not render Kubernetes Secret objects. The workload references existing runtime Secrets.
+Default. Helm does not render Kubernetes Secret objects. Workloads reference the runtime Secret names.
 
 ```yaml
 secrets:
   create: true
 ```
 
-This mode may be used only for controlled local experiments. If enabled, a password value must be supplied externally and should not be committed to Git.
+Controlled local experiments only. If enabled, supply the password externally and do not commit it.
 
 ## Validation
 
-Render the chart with default values:
-
 ```bash
 helm lint charts/tenderops
-
-helm template tenderops charts/tenderops \
-  --namespace tenderops
+helm template tenderops charts/tenderops --namespace tenderops
 ```
 
-Check that no secret values are rendered:
+Check that default render does not create Secrets or inline passwords:
 
 ```bash
 helm template tenderops charts/tenderops \
-  --namespace tenderops > /tmp/tenderops.yaml
-
-grep -n "kind: Secret\|POSTGRES_PASSWORD\|SPRING_DATASOURCE_PASSWORD" /tmp/tenderops.yaml
+  --namespace tenderops \
+  | grep -nE 'kind: Secret|POSTGRES_PASSWORD|SPRING_DATASOURCE_PASSWORD' || true
 ```
 
 Expected default behavior:
@@ -145,3 +106,12 @@ Expected default behavior:
 - no Helm-rendered `kind: Secret` objects
 - no literal database password in rendered manifests
 - Deployments reference the runtime Secret names
+
+## Learning / break-glass only
+
+Manual install is not the lab delivery path. If you use it, create the runtime Secrets first:
+
+```bash
+helm install tenderops charts/tenderops --namespace tenderops --create-namespace
+helm upgrade tenderops charts/tenderops --namespace tenderops
+```

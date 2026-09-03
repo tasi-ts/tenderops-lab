@@ -27,7 +27,7 @@ TenderOps API is a small tender-management service. PostgreSQL stores tender rec
 The useful demo surface is operational:
 
 - `GET /api/tenders` and `GET /api/tenders/summary`
-- Spring Boot Actuator health, metrics, and Prometheus scrape endpoints
+- Spring Boot Actuator health, metrics, info, and Prometheus scrape endpoints
 - Kubernetes probes, GitOps sync, Trivy gates, and Grafana dashboards
 
 Deeper narrative: [docs/project-walkthrough.md](docs/project-walkthrough.md).
@@ -80,7 +80,7 @@ flowchart TD
     GHCR -.->|optional public pull| Kind
 ```
 
-Full diagrams and object notes: [docs/architecture.md](docs/architecture.md).
+Sketch of the two local paths. Object-level notes: [docs/architecture.md](docs/architecture.md).
 
 ## Technology stack
 
@@ -178,9 +178,10 @@ Implemented in the lab:
 
 ## Observability
 
-Actuator endpoints used in this lab:
+Actuator endpoints used in this lab (Compose / Helm / `k8s/base`):
 
 - `/actuator/health`, `/actuator/health/liveness`, `/actuator/health/readiness`
+- `/actuator/info`
 - `/actuator/metrics`
 - `/actuator/prometheus`
 
@@ -238,20 +239,42 @@ This lab does not claim production readiness. Remaining gaps include:
 
 ## Documentation map
 
+### Hub and narrative
+
 | Document | Contents |
 | --- | --- |
 | [docs/project-walkthrough.md](docs/project-walkthrough.md) | Demo narrative |
-| [docs/project-review-summary.md](docs/project-review-summary.md) | Technical review notes and Q&A |
+| [docs/project-review-summary.md](docs/project-review-summary.md) | Technical Q&A and talking points |
+| [docs/project-goals.md](docs/project-goals.md) | Goals and non-goals |
+| [docs/learning-roadmap.md](docs/learning-roadmap.md) | Completed and planned learning path |
 | [docs/architecture.md](docs/architecture.md) | Architecture diagrams |
 | [docs/demo-commands.md](docs/demo-commands.md) | Command transcript for demos |
+
+### Topic docs
+
+| Document | Contents |
+| --- | --- |
 | [docs/observability.md](docs/observability.md) | Prometheus, Grafana, Actuator |
-| [docs/security-hardening.md](docs/security-hardening.md) | Scanning and hardening |
+| [docs/security-hardening.md](docs/security-hardening.md) | Scanning, hardening, residual risk |
 | [docs/ci-cd.md](docs/ci-cd.md) | GitHub Actions and GHCR |
 | [docs/public-release-checklist.md](docs/public-release-checklist.md) | Public repo, GHCR, and v0.1 tag checklist |
-| [docs/project-goals.md](docs/project-goals.md) | Goals and non-goals |
+| [docs/security-agent-roadmap.md](docs/security-agent-roadmap.md) | Pointer to Cursor agent workflows |
+| [docs/decisions/0001-local-first-devops-lab.md](docs/decisions/0001-local-first-devops-lab.md) | ADR: local-first lab |
+| [docs/decisions/0002-helm-argocd-gitops.md](docs/decisions/0002-helm-argocd-gitops.md) | ADR: Helm and Argo CD |
+
+### Folder READMEs
+
+| Document | Contents |
+| --- | --- |
 | [charts/README.md](charts/README.md) | Helm chart and runtime Secrets |
+| [gitops/apps/README.md](gitops/apps/README.md) | Argo CD Application |
+| [k8s/README.md](k8s/README.md) | Raw manifests (learning subset) |
+| [src/api/README.md](src/api/README.md) | API commands and endpoints |
+| [docker/README.md](docker/README.md) | Image build and Compose |
+| [scripts/README.md](scripts/README.md) | Local CI and Trivy helpers |
+| [observability/README.md](observability/README.md) | kube-prometheus-stack values |
 | [agents/README.md](agents/README.md) | Cursor security agent workflows |
-| [observability/README.md](observability/README.md) | Local monitoring stack files |
+| [infra/README.md](infra/README.md) | Reserved Terraform/Azure notes |
 
 ## License
 

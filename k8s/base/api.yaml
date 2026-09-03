@@ -6,7 +6,7 @@ metadata:
 data:
   SPRING_PROFILES_ACTIVE: local
   SPRING_DATASOURCE_URL: jdbc:postgresql://tenderops-db:5432/tenderops
-  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,info,metrics
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,info,metrics,prometheus
   MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: always
 ---
 apiVersion: apps/v1

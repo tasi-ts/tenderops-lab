@@ -120,7 +120,7 @@ GitHub repository
 
 CI does not deploy to the cluster. Argo CD reconciles Kubernetes from Git.
 
-Raw manifests in `k8s/base/` match the Helm chart closely enough for learning, but they are not the active delivery path.
+Raw manifests in `k8s/base/` are a learning subset of the Helm chart. They are not the active delivery path and do not include the NetworkPolicy, ServiceMonitor, Grafana dashboard ConfigMap, or PostgreSQL resource limits. See [k8s/README.md](../k8s/README.md).
 
 ## Security and observability
 

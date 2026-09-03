@@ -55,22 +55,7 @@ Instead, the chart references pre-existing Kubernetes Secrets:
 - `tenderops-api-runtime-secret`
 - `tenderops-db-runtime-secret`
 
-For the local kind/Argo CD lab, these runtime Secrets must exist in the `tenderops` namespace before the application is synced:
-
-```bash
-kubectl create secret generic tenderops-db-runtime-secret \
-  -n tenderops \
-  --from-literal=POSTGRES_DB=tenderops \
-  --from-literal=POSTGRES_USER=tenderops \
-  --from-literal=POSTGRES_PASSWORD=tenderops \
-  --dry-run=client -o yaml | kubectl apply -f -
-
-kubectl create secret generic tenderops-api-runtime-secret \
-  -n tenderops \
-  --from-literal=SPRING_DATASOURCE_USERNAME=tenderops \
-  --from-literal=SPRING_DATASOURCE_PASSWORD=tenderops \
-  --dry-run=client -o yaml | kubectl apply -f -
-```
+Create those Secrets in namespace `tenderops` before Argo CD sync. Exact `kubectl` commands: [charts/README.md](../charts/README.md) and [docs/demo-commands.md](demo-commands.md).
 
 These are local demo credentials only.
 
@@ -117,7 +102,7 @@ The Kubernetes deployment includes:
 
 - Spring Validation on create requests (`@Valid`, `@NotBlank`)
 - Flyway-managed schema migrations in source control
-- limited Actuator exposure: health, info, and metrics
+- lab Actuator exposure: health, info, metrics, and prometheus (Compose, Helm, and `k8s/base` set this via `MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE`; `application.yml` defaults to health and info only)
 
 ## Local-lab acceptable limitations
 
@@ -153,7 +138,7 @@ Required before any real production deployment:
 
 Short term:
 
-1. Document the runtime secret prerequisite in the chart documentation.
+1. Keep [charts/README.md](../charts/README.md) and [docs/demo-commands.md](demo-commands.md) aligned after any secret-model change.
 2. Add a production-shaped secret-management option, such as SOPS, External Secrets, or Sealed Secrets.
 3. Restrict Actuator detail and endpoints for non-local profiles.
 4. Revisit the Flyway startup strategy and document why the custom migration runner is currently retained.
@@ -188,6 +173,6 @@ These residual risks are intentional for a learning/demo environment and must no
 
 ## Actuator security note
 
-This lab exposes health, info, and metrics Actuator endpoints and currently shows health details for local inspection.
+This lab exposes health, info, metrics, and Prometheus Actuator endpoints on the application port and currently shows health details for local inspection.
 
 In production, Actuator endpoints should be restricted because exposed management endpoints may reveal sensitive operational information. A production-style deployment should reduce exposed endpoints, avoid `show-details: always`, and protect management endpoints through authentication, network isolation, or a separate management path.

@@ -128,10 +128,10 @@ Do not change application code, Helm templates, Kubernetes manifests, CI workflo
 Update relevant files such as:
 
 - `docs/security-hardening.md`
-- `docs/security-agent-roadmap.md`
 - `docs/project-review-summary.md`
 - `agents/README.md`
-- `agents/cursor/README.md`
+
+Keep `docs/security-agent-roadmap.md` as a short pointer. Do not restore a second copy of the agent status lists.
 
 Clearly document:
 

@@ -2,7 +2,7 @@
 
 This directory contains agent workflow documentation for TenderOps Lab.
 
-The current implemented workflows focus on controlled, agent-assisted DevSecOps work with Cursor.
+Cursor launchers: [agents/cursor/README.md](cursor/README.md). Short status pointer: [docs/security-agent-roadmap.md](../docs/security-agent-roadmap.md).
 
 ## Implemented agent workflows
 
@@ -92,21 +92,6 @@ For posture review work:
 
 ## Current status
 
-Implemented:
+Implemented: project rules, remediation and posture-review runbooks/prompts, one executed posture review, and CI security gates (`.github/workflows/security.yml`).
 
-- project-wide Cursor rule
-- security remediation Cursor rule
-- security posture review Cursor rule
-- reusable remediation runbook
-- reusable remediation prompts
-- reusable posture review runbook
-- reusable posture review prompts
-- Cursor agent README
-- full security posture review executed in Cursor
-- posture review documentation update
-- CI security gates via `.github/workflows/security.yml`
-
-Planned:
-
-- add additional agent runbooks only when repeated workflows emerge
-- keep posture and residual-risk docs current after future hardening work
+Planned: more runbooks only when a workflow repeats; keep residual-risk docs current after hardening. See [docs/security-hardening.md](../docs/security-hardening.md).

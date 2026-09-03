@@ -1,6 +1,6 @@
 # Argo CD Applications
 
-This directory contains Argo CD `Application` manifests.
+This directory contains Argo CD `Application` manifests. Parent notes: [gitops/README.md](../README.md).
 
 ## Current application
 
@@ -47,3 +47,5 @@ kubectl describe application tenderops -n argocd
 ```
 
 This shows sync errors, repository access problems, rendering errors, and health information.
+
+Full bootstrap and GitOps demo commands: [docs/demo-commands.md](../../docs/demo-commands.md). Runtime Secrets: [charts/README.md](../../charts/README.md).

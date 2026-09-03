@@ -36,4 +36,4 @@ A possible future cloud version would look like this:
 
 ## Current role of this directory
 
-This directory documents planned infrastructure work. The current working demo remains fully local.
+This directory documents planned infrastructure work. The current working demo remains fully local. The [terraform/](terraform/README.md) folder is reserved for that later example.

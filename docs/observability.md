@@ -33,8 +33,17 @@ The Spring Boot API exposes Actuator health endpoints:
 - `/actuator/health`
 - `/actuator/health/liveness`
 - `/actuator/health/readiness`
+- `/actuator/info`
 
-Kubernetes uses these endpoints for liveness and readiness probes.
+Kubernetes uses the liveness and readiness endpoints for probes.
+
+`src/api/src/main/resources/application.yml` exposes `health` and `info` only. Compose, the Helm chart, and `k8s/base` override that with:
+
+```text
+MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,metrics,prometheus
+```
+
+That is the lab runtime set used for Prometheus scraping.
 
 ## Application metrics
 
