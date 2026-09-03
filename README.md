@@ -252,3 +252,7 @@ This lab does not claim production readiness. Remaining gaps include:
 | [charts/README.md](charts/README.md) | Helm chart and runtime Secrets |
 | [agents/README.md](agents/README.md) | Cursor security agent workflows |
 | [observability/README.md](observability/README.md) | Local monitoring stack files |
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
