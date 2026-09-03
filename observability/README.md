@@ -1,27 +1,52 @@
 # Observability
 
-This directory is reserved for observability-related configuration.
+This directory holds local Kubernetes monitoring values for TenderOps Lab.
 
-The current project uses lightweight Spring Boot and Kubernetes observability rather than a full monitoring stack.
+The live operational story is documented in `docs/observability.md`.
 
 ## Current observability
 
 Implemented:
 
-- Spring Boot Actuator health endpoint
-- Spring Boot Actuator metrics endpoint
-- Kubernetes readiness probe
-- Kubernetes liveness probe
-- `kubectl logs`
-- `kubectl describe`
-- `kubectl get events`
+- Spring Boot Actuator health, liveness, and readiness
+- Spring Boot Actuator JSON metrics
+- Spring Boot Actuator Prometheus endpoint
+- Kubernetes readiness and liveness probes
+- kube-prometheus-stack values for a local kind install
+- ServiceMonitor-based scrape of the TenderOps API (defined in the Helm chart)
+- Grafana dashboard ConfigMap for the API (defined in the Helm chart)
+- `kubectl logs`, `kubectl describe`, and `kubectl get events`
 
-## Current documentation
+Not yet implemented:
 
-See:
+- Loki / centralized application logs
+- Alertmanager rules
+- OpenTelemetry tracing
+- authenticated or production-grade Grafana
+
+## Files
 
 ```text
-docs/observability.md
+observability/kube-prometheus-stack-values.yaml
+```
+
+Local-only Grafana credentials in that file are `admin` / `admin`. Do not reuse them outside this lab.
+
+Install example (kind cluster already running):
+
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm upgrade --install monitoring prometheus-community/kube-prometheus-stack \
+  --namespace monitoring \
+  --create-namespace \
+  -f observability/kube-prometheus-stack-values.yaml
+```
+
+Expected result: Prometheus and Grafana become Ready in namespace `monitoring`. Service names used in docs:
+
+```text
+monitoring-kube-prometheus-prometheus
+monitoring-grafana
 ```
 
 ## Useful commands
@@ -30,17 +55,9 @@ docs/observability.md
 curl http://localhost:8080/actuator
 curl http://localhost:8080/actuator/health
 curl http://localhost:8080/actuator/metrics
+curl http://localhost:8080/actuator/prometheus | head -20
 kubectl logs -n tenderops -l app=tenderops-api --tail=100
 kubectl get events -n tenderops --sort-by=.metadata.creationTimestamp
 ```
 
-## Future extensions
-
-Potential future additions:
-
-- Prometheus
-- Grafana
-- Loki
-- OpenTelemetry
-- dashboards
-- alerting rules
+Port-forwards and PromQL examples: `docs/observability.md` and `docs/demo-commands.md`.
