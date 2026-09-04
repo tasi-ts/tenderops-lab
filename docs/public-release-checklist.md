@@ -56,8 +56,8 @@ Public GitHub repository visibility is a GitHub UI (or `gh`) action. Do not flip
 
 - [x] Confirm the default branch is `main` and CI/security workflows are green.
 - [x] Decide whether issues, discussions, and wiki should stay enabled.
-- [ ] Set repository visibility to public only after the checks in this document.
-- [ ] After the change, clone anonymously over HTTPS and confirm the tree matches expectations.
+- [x] Set repository visibility to public only after the checks in this document.
+- [x] After the change, clone anonymously over HTTPS and confirm the tree matches expectations.
 
 Public source visibility does **not** change GHCR package visibility automatically.
 
@@ -81,7 +81,7 @@ ghcr.io/tasi-ts/tenderops-api
 
 - [x] Open GitHub **Packages** for `tenderops-api`.
 - [x] Review package visibility separately from repository visibility.
-- [ ] If the kind cluster should pull without an imagePullSecret, set the package to public **and** confirm anonymous `docker pull` works.
+- [x] If the kind cluster should pull without an imagePullSecret, set the package to public **and** confirm anonymous `docker pull` works.
 - [x] Link the package to this repository if GitHub has not already linked it.
 - [x] Confirm tags `main` and `sha-<commit>` match the publish workflow.
 - [x] Keep Helm `values.yaml` on `tenderops-api:0.1.0` until you intentionally switch the chart to GHCR.
@@ -94,10 +94,10 @@ While this GitHub repository is private, Argo CD needs a read-only GitHub creden
 
 After the repository is public:
 
-- [ ] Confirm Argo CD can sync without repository credentials.
-- [ ] Remove the Argo CD repository credential that stored the GitHub token.
-- [ ] Rotate and delete the GitHub fine-grained token that was issued for Argo CD. Do not leave a live token in the cluster or in GitHub if it is unused.
-- [ ] Confirm `kubectl get applications -n argocd` still shows Synced/Healthy.
+- [x] Confirm Argo CD can sync without repository credentials.
+- [x] Remove the Argo CD repository credential that stored the GitHub token.
+- [x] Rotate and delete the GitHub fine-grained token that was issued for Argo CD. Do not leave a live token in the cluster or in GitHub if it is unused.
+- [x] Confirm `kubectl get applications -n argocd` still shows Synced/Healthy.
 
 The token, if it existed, was a cluster/runtime credential. It must never be committed.
 
@@ -151,13 +151,13 @@ git tag -a v0.1.0 -m "TenderOps Lab v0.1.0"
 git push origin v0.1.0
 ```
 
-- [ ] Working tree is clean.
+- [x] Working tree is clean.
 - [x] You are on up-to-date `main`.
-- [ ] README, architecture, observability, walkthrough, demo commands, and this checklist are on `main`.
+- [x] README, architecture, observability, walkthrough, demo commands, and this checklist are on `main`.
 - [x] CI workflow is green.
 - [x] Security workflow is green.
 - [x] Image publish has succeeded if you want GHCR tags to exist for the same commit.
-- [ ] Annotated tag `v0.1.0` is pushed.
+- [x] Annotated tag `v0.1.0` is pushed.
 - [x] GitHub Release creation is optional and separate; do not auto-create it from this task.
 
 If the tag needs to move after a mistake, treat retagging as an explicit operator decision. Do not force-push `main`.
