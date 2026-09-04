@@ -8,22 +8,22 @@ This project is local-first and portfolio-ready. It is not production-ready.
 
 ## Repository safety
 
-- [ ] README, architecture, walkthrough, observability, security, and this checklist describe the lab honestly (local-first, not production).
-- [ ] No kubeconfigs, cloud credentials, private keys, or personal access tokens are tracked in Git.
-- [ ] Docker Compose demo credentials in `compose.yaml` are marked local-only.
-- [ ] Grafana `admin` / `admin` in `observability/kube-prometheus-stack-values.yaml` is marked local-only.
-- [ ] Helm `values.yaml` does not contain a database password; runtime Secrets are created outside Git.
-- [ ] `.gitignore` covers `.env`, `secrets/`, `*.secret.yaml`, `reports/security/`, and `charts/tenderops/values-local.yaml`.
-- [ ] Generated Trivy reports are not committed.
+- [x] README, architecture, walkthrough, observability, security, and this checklist describe the lab honestly (local-first, not production).
+- [x] No kubeconfigs, cloud credentials, private keys, or personal access tokens are tracked in Git.
+- [x] Docker Compose demo credentials in `compose.yaml` are marked local-only.
+- [x] Grafana `admin` / `admin` in `observability/kube-prometheus-stack-values.yaml` is marked local-only.
+- [x] Helm `values.yaml` does not contain a database password; runtime Secrets are created outside Git.
+- [x] `.gitignore` covers `.env`, `secrets/`, `*.secret.yaml`, `reports/security/`, and `charts/tenderops/values-local.yaml`.
+- [x] Generated Trivy reports are not committed.
 
 ## Git history review
 
 Tracked files can be clean while an old commit still contains a secret.
 
-- [ ] Review `git log --oneline --all` for accidental credential commits.
-- [ ] Search history if there is any doubt a token was ever committed.
-- [ ] If a real token, password, or key was ever committed: **rotate it immediately**, then clean history with a dedicated process (`git filter-repo` or equivalent) before the repository is public.
-- [ ] Do not rely on a later commit that merely deletes a secret. History remains readable after the repo is public.
+- [x] Review `git log --oneline --all` for accidental credential commits.
+- [x] Search history if there is any doubt a token was ever committed.
+- [x] If a real token, password, or key was ever committed: **rotate it immediately**, then clean history with a dedicated process (`git filter-repo` or equivalent) before the repository is public.
+- [x] Do not rely on a later commit that merely deletes a secret. History remains readable after the repo is public.
 
 This checklist does not run history rewriting. History cleanup is a separate, explicit operator task.
 
@@ -44,9 +44,9 @@ git grep -nEi '(password|secret|token|apikey|api_key|client_secret|private key|b
   -- ':!reports/**' ':!.git/**' || true
 ```
 
-- [ ] Re-run the scan on the release commit.
-- [ ] Confirm remaining hits are local-demo, documentation, or workflow references.
-- [ ] Stop and rotate if any `ghp_`, `github_pat_`, private key block, or other live credential appears.
+- [x] Re-run the scan on the release commit.
+- [x] Confirm remaining hits are local-demo, documentation, or workflow references.
+- [x] Stop and rotate if any `ghp_`, `github_pat_`, private key block, or other live credential appears.
 
 GitHub Actions secret **values** are not committed. Secret **names** and `${{ secrets.* }}` references in workflows are visible in a public repo. That is expected.
 
@@ -54,8 +54,8 @@ GitHub Actions secret **values** are not committed. Secret **names** and `${{ se
 
 Public GitHub repository visibility is a GitHub UI (or `gh`) action. Do not flip it until the history and secret reviews pass.
 
-- [ ] Confirm the default branch is `main` and CI/security workflows are green.
-- [ ] Decide whether issues, discussions, and wiki should stay enabled.
+- [x] Confirm the default branch is `main` and CI/security workflows are green.
+- [x] Decide whether issues, discussions, and wiki should stay enabled.
 - [ ] Set repository visibility to public only after the checks in this document.
 - [ ] After the change, clone anonymously over HTTPS and confirm the tree matches expectations.
 
@@ -63,11 +63,11 @@ Public source visibility does **not** change GHCR package visibility automatical
 
 ## GitHub Actions secrets
 
-- [ ] Open the GitHub repo **Settings → Secrets and variables → Actions**.
-- [ ] Confirm there are no leftover personal tokens stored as Actions secrets that would leak by workflow misuse.
-- [ ] Remember that `GITHUB_TOKEN` is provided by GitHub for workflows such as GHCR login; its value is not in this repository.
-- [ ] Review workflow permissions in `.github/workflows/` (`contents: read`, `packages: write` on image publish).
-- [ ] After going public, consider whether any Actions secret used only for private-repo access can be deleted.
+- [x] Open the GitHub repo **Settings → Secrets and variables → Actions**.
+- [x] Confirm there are no leftover personal tokens stored as Actions secrets that would leak by workflow misuse.
+- [x] Remember that `GITHUB_TOKEN` is provided by GitHub for workflows such as GHCR login; its value is not in this repository.
+- [x] Review workflow permissions in `.github/workflows/` (`contents: read`, `packages: write` on image publish).
+- [x] After going public, consider whether any Actions secret used only for private-repo access can be deleted.
 
 ## GHCR package visibility
 
@@ -79,12 +79,12 @@ Published name pattern:
 ghcr.io/tasi-ts/tenderops-api
 ```
 
-- [ ] Open GitHub **Packages** for `tenderops-api`.
-- [ ] Review package visibility separately from repository visibility.
+- [x] Open GitHub **Packages** for `tenderops-api`.
+- [x] Review package visibility separately from repository visibility.
 - [ ] If the kind cluster should pull without an imagePullSecret, set the package to public **and** confirm anonymous `docker pull` works.
-- [ ] Link the package to this repository if GitHub has not already linked it.
-- [ ] Confirm tags `main` and `sha-<commit>` match the publish workflow.
-- [ ] Keep Helm `values.yaml` on `tenderops-api:0.1.0` until you intentionally switch the chart to GHCR.
+- [x] Link the package to this repository if GitHub has not already linked it.
+- [x] Confirm tags `main` and `sha-<commit>` match the publish workflow.
+- [x] Keep Helm `values.yaml` on `tenderops-api:0.1.0` until you intentionally switch the chart to GHCR.
 
 A public Git repo with a private GHCR package will still require pull credentials in kind.
 
@@ -122,11 +122,11 @@ kubectl get pods -n tenderops
 kubectl port-forward -n tenderops svc/tenderops-api 8080:8080
 ```
 
-- [ ] Retired hiring-process wording is absent from tracked files.
-- [ ] Helm lint passes.
-- [ ] Default Helm render does not create Secret objects or inline database passwords.
-- [ ] CI and security GitHub Actions are green on `main`.
-- [ ] README, architecture, observability, walkthrough, and this checklist are current.
+- [x] Retired hiring-process wording is absent from tracked files.
+- [x] Helm lint passes.
+- [x] Default Helm render does not create Secret objects or inline database passwords.
+- [x] CI and security GitHub Actions are green on `main`.
+- [x] README, architecture, observability, walkthrough, and this checklist are current.
 
 ## Notes before public release
 
@@ -152,12 +152,12 @@ git push origin v0.1.0
 ```
 
 - [ ] Working tree is clean.
-- [ ] You are on up-to-date `main`.
+- [x] You are on up-to-date `main`.
 - [ ] README, architecture, observability, walkthrough, demo commands, and this checklist are on `main`.
-- [ ] CI workflow is green.
-- [ ] Security workflow is green.
-- [ ] Image publish has succeeded if you want GHCR tags to exist for the same commit.
+- [x] CI workflow is green.
+- [x] Security workflow is green.
+- [x] Image publish has succeeded if you want GHCR tags to exist for the same commit.
 - [ ] Annotated tag `v0.1.0` is pushed.
-- [ ] GitHub Release creation is optional and separate; do not auto-create it from this task.
+- [x] GitHub Release creation is optional and separate; do not auto-create it from this task.
 
 If the tag needs to move after a mistake, treat retagging as an explicit operator decision. Do not force-push `main`.
